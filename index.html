@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nightmare Hack</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: black;
+      color: #0f0;
+      font-family: monospace;
+      overflow: hidden;
+    }
+    #terminal {
+      padding: 20px;
+      white-space: pre-wrap;
+      font-size: 1.2em;
+    }
+    .flicker {
+      animation: flicker 0.1s infinite alternate;
+    }
+    @keyframes flicker {
+      0% { background: black; }
+      100% { background: darkred; }
+    }
+    #jumpscare {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #jumpscare img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <div id="jumpscare">
+    <img src="https://i.imgur.com/8pQe2Qv.jpg" alt="SCREAM">
+  </div>
+
+  <script>
+    const terminal = document.getElementById("terminal");
+
+    function typeLine(line, delay = 50) {
+      return new Promise(resolve => {
+        let i = 0;
+        const interval = setInterval(() => {
+          terminal.textContent += line[i];
+          i++;
+          if (i >= line.length) {
+            clearInterval(interval);
+            terminal.textContent += "\n";
+            resolve();
+          }
+        }, delay);
+      });
+    }
+
+    document.addEventListener("click", async function nightmare() {
+      document.removeEventListener("click", nightmare);
+
+      // Try fullscreen
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+
+      // Flicker
+      document.body.classList.add("flicker");
+
+      // Creepy ambient
+      const ambient = new Audio("https://www.myinstants.com/media/sounds/movie_1.mp3");
+      ambient.loop = true;
+      ambient.play();
+
+      // Fake hacker text
+      await typeLine("Connecting to remote server...", 50);
+      await typeLine("Access granted. UID: 666", 50);
+      await typeLine("Downloading sensitive files...", 50);
+      await typeLine("Sending all photos to maheshnatbhanjan@gmail.com", 50);
+      await typeLine("Injecting ransomware payload...", 50);
+      await typeLine("Formatting C:/ Drive...", 50);
+
+      // Fake progress bar
+      let progress = 0;
+      const fakeProgress = setInterval(() => {
+        progress += Math.floor(Math.random() * 10);
+        if (progress > 100) progress = 100;
+        terminal.textContent += `\rProgress: [${"=".repeat(progress/5)}${" ".repeat(20 - progress/5)}] ${progress}%`;
+        if (progress >= 100) clearInterval(fakeProgress);
+      }, 200);
+
+      // Freeze for ~1 min
+      const freezeTime = Date.now() + 60000;
+      while (Date.now() < freezeTime) {
+        Math.random() * Math.random();
+      }
+
+      // BOOM jumpscare
+      document.getElementById("jumpscare").style.display = "flex";
+      const scream = new Audio("https://www.myinstants.com/media/sounds/scream_1.mp3");
+      scream.play();
+
+      // Evil laugh loop
+      setTimeout(() => {
+        const laugh = new Audio("https://www.myinstants.com/media/sounds/evil-laugh.mp3");
+        laugh.play();
+      }, 2000);
+
+      // Endless alert to lock them in horror
+      setInterval(() => {
+        alert("💀 YOU ARE NOT SAFE 💀");
+      }, 4000);
+    });
+  </script>
+</body>
+</html>
